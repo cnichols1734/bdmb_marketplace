@@ -7,6 +7,7 @@ import uuid
 from datetime import datetime, timedelta
 import shutil
 import threading
+import pytz
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -91,26 +92,160 @@ def send_async_email(msg):
         except Exception as e:
             app.logger.error(f"Error sending email: {e}")
 
+
 def send_comment_notification(post, comment):
     """Prepare and send email notification asynchronously"""
     if post.email:  # Only send if post has an email address
         try:
-            msg = Message(
-                subject=f'New Comment on Your Post: {post.title}',
-                recipients=[post.email],
-                body=f'''Hello,
+            # Convert UTC to Central Time
+            central = pytz.timezone('America/Chicago')
+            comment_time = comment.timestamp.replace(tzinfo=pytz.UTC).astimezone(central)
+
+            # HTML version of the email
+            html_content = f'''
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap');
+                    body {{
+                        font-family: Arial, sans-serif;
+                        line-height: 1.6;
+                        color: #333333;
+                        margin: 0;
+                        padding: 0;
+                    }}
+                    .container {{
+                        max-width: 600px;
+                        margin: 0 auto;
+                        padding: 20px;
+                    }}
+                    .header {{
+                        background-color: #3b82f6;
+                        padding: 20px;
+                        text-align: center;
+                        border-radius: 5px 5px 0 0;
+                    }}
+                    .site-title {{
+                        font-family: 'Black Ops One', Arial, sans-serif;
+                        font-size: 24px;
+                        margin: 0 0 10px 0;
+                        color: #ffffff;
+                        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+                    }}
+                    .notification-title {{
+                        font-size: 20px;
+                        margin: 0;
+                        font-weight: normal;
+                        color: #ffffff;
+                    }}
+                    .content {{
+                        background-color: #ffffff;
+                        padding: 20px;
+                        border: 1px solid #e5e7eb;
+                        border-radius: 0 0 5px 5px;
+                    }}
+                    .comment-box {{
+                        background-color: #f3f4f6;
+                        padding: 15px;
+                        border-radius: 5px;
+                        margin: 20px 0;
+                    }}
+                    .button-container {{
+                        text-align: center;
+                        margin-top: 20px;
+                    }}
+                    .button {{
+                        display: inline-block;
+                        padding: 10px 20px;
+                        background-color: #3b82f6;
+                        color: #ffffff !important;
+                        text-decoration: none;
+                        border-radius: 5px;
+                        font-weight: 500;
+                    }}
+                    .footer {{
+                        text-align: center;
+                        margin-top: 20px;
+                        font-size: 12px;
+                        color: #6b7280;
+                    }}
+                    @media (prefers-color-scheme: dark) {{
+                        .header {{
+                            background-color: #2563eb;
+                        }}
+                        .site-title, .notification-title {{
+                            color: #ffffff !important;
+                        }}
+                        .content {{
+                            background-color: #ffffff;
+                        }}
+                        .button {{
+                            background-color: #2563eb;
+                            color: #ffffff !important;
+                        }}
+                    }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1 class="site-title">Dads of Mont Belvieu Marketplace</h1>
+                        <h2 class="notification-title">New Comment on Your Post</h2>
+                    </div>
+                    <div class="content">
+                        <p>Hello,</p>
+                        <p>You have received a new comment on your post "<strong>{post.title}</strong>".</p>
+
+                        <div class="comment-box">
+                            <p style="margin: 0;"><strong>Comment:</strong></p>
+                            <p style="margin: 10px 0;">{comment.content}</p>
+                            <p style="margin: 0; font-size: 12px; color: #6b7280;">
+                                Posted {comment_time.strftime('%B %d, %Y at %I:%M %p')} CST
+                            </p>
+                        </div>
+
+                        <div class="button-container">
+                            <a href="{request.host_url}post/{post.id}" class="button">
+                                View Post and Respond
+                            </a>
+                        </div>
+
+                        <div class="footer">
+                            <p>This email was sent from DMB Marketplace</p>
+                            <p>This is an automated message, please do not reply directly to this email.</p>
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+            '''
+
+            # Plain text version as fallback
+            text_content = f'''Dads of Mont Belvieu Marketplace
+New Comment on Your Post
+
+Hello,
 
 A new comment has been added to your post "{post.title}".
 
 Comment:
 {comment.content}
 
+Posted on {comment_time.strftime('%B %d, %Y at %I:%M %p')} CST
+
 View your post and respond at:
 {request.host_url}post/{post.id}
 
 Best regards,
-DMB Marketplace Team
-'''
+DMB Marketplace Team'''
+
+            msg = Message(
+                subject=f'DMB Marketplace: New Comment on Your Post - {post.title}',
+                recipients=[post.email],
+                body=text_content,
+                html=html_content
             )
 
             # Create and start background thread for sending email
