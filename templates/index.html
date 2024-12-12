@@ -1,0 +1,441 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Existing scrollbar styles remain the same */
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 3px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        background: #737682;
+    }
+
+    /* Add to Home Screen button styles */
+    #addToHomeScreen {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        #addToHomeScreen {
+            display: block;
+        }
+    }
+
+    /* Emphasis box styles remain the same */
+    .emphasis-box {
+        border: 2px solid #3b82f6;
+        background-color: #eff6ff;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+</style>
+
+<!-- Updated More Compact Add to Home Screen Banner -->
+<div id="addToHomeScreen" class="w-full px-3 py-2 bg-blue-50 border-b border-blue-100 mb-3">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+            <div>
+                <h3 class="font-medium text-blue-800 text-sm">Add to Home Screen</h3>
+                <p class="text-xs text-blue-600">Get quick access anytime!</p>
+            </div>
+        </div>
+        <button onclick="showInstallInstructions()" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-blue-700 transition flex items-center space-x-1">
+            <span>See How</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+    </div>
+</div>
+
+<!-- Installation Instructions Modal -->
+<div id="installModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen px-4 py-6">
+        <div class="bg-white rounded-lg max-w-md w-full p-6 overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-start mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">How to Add to Home Screen</h3>
+                <button onclick="closeInstallModal()" class="text-gray-400 hover:text-gray-500">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Important Notice Box -->
+                <div class="emphasis-box">
+                    <p class="font-medium text-blue-800 mb-2">⚠️ Important: First Step Required!</p>
+                    <p class="text-sm text-blue-700">This feature only works in Safari (for iPhone) or Chrome (for Android). If you're viewing this in the Facebook app, you'll need to open the site in your phone's main browser first.</p>
+                </div>
+
+                <!-- Facebook Instructions -->
+                <div id="facebookInstructions" class="space-y-3">
+                    <p class="font-medium text-gray-800">Step 1: Open in Your Phone's Browser</p>
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                        <p class="text-sm font-medium text-gray-700">If using Facebook:</p>
+                        <ol class="list-decimal list-inside space-y-2 text-gray-600 text-sm">
+                            <li>Tap the <span class="font-medium">⋮</span> (three dots) in the top right corner</li>
+                            <li>Select <span class="font-medium">"Open in Browser"</span></li>
+                            <li>This will open Safari (iPhone) or Chrome (Android)</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- iOS Instructions -->
+                <div id="iosInstructions" class="space-y-3 hidden">
+                    <p class="font-medium text-gray-800">Step 2: Add to Home Screen in Safari</p>
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                        <p class="text-sm font-medium text-gray-700">Once in Safari:</p>
+                        <ol class="list-decimal list-inside space-y-2 text-gray-600 text-sm">
+                            <li>Tap the <span class="font-medium">Share button</span> (square with arrow) at the bottom</li>
+                            <li>Scroll down and tap <span class="font-medium">"Add to Home Screen"</span></li>
+                            <li>Tap <span class="font-medium">"Add"</span> in the top right</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Android Instructions -->
+                <div id="androidInstructions" class="space-y-3 hidden">
+                    <p class="font-medium text-gray-800">Step 2: Add to Home Screen in Chrome</p>
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                        <p class="text-sm font-medium text-gray-700">Once in Chrome:</p>
+                        <ol class="list-decimal list-inside space-y-2 text-gray-600 text-sm">
+                            <li>Tap the <span class="font-medium">⋮</span> (three dots menu)</li>
+                            <li>Tap <span class="font-medium">"Add to Home screen"</span></li>
+                            <li>Tap <span class="font-medium">"Add"</span> to confirm</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Updated Search Bar Section -->
+<div class="w-full px-0 md:px-4 mt-6">
+    <!-- Search Bar with Clear Button -->
+    <form action="{{ url_for('index') }}" method="get" class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 mb-4 md:mb-8 justify-center px-3 md:px-2">
+        <div class="relative w-full sm:w-64">
+            <input
+                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition pr-10"
+                type="search"
+                name="search"
+                placeholder="Search..."
+                value="{{ request.args.get('search', '') }}"
+                aria-label="Search"
+            >
+            {% if request.args.get('search') %}
+            <a href="{{ url_for('index', category=request.args.get('category', 'All')) }}"
+               class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+               title="Clear search">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+            </a>
+            {% endif %}
+        </div>
+        <button
+            type="submit"
+            class="w-full sm:w-auto bg-blue-600 text-white rounded px-4 py-2 font-medium hover:bg-blue-700 transition flex items-center justify-center space-x-2"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+            </svg>
+            <span>Search</span>
+        </button>
+    </form>
+
+    {% if request.args.get('search') %}
+    <div class="flex justify-center mb-4">
+        <div class="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg flex items-center space-x-2">
+            <span class="text-sm">Showing results for: "{{ request.args.get('search') }}"</span>
+            <a href="{{ url_for('index', category=request.args.get('category', 'All')) }}"
+               class="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                Clear Search
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Category Filters -->
+    <div class="flex flex-wrap justify-center mb-4 md:mb-8 gap-2 px-3 md:px-2">
+        <a href="{{ url_for('index') }}" class="text-sm font-medium px-3 py-1 rounded-full border border-blue-500 text-blue-700 hover:bg-blue-100 transition">All</a>
+        {% set categories = ['Guns', 'Hunting & Fishing', 'Misc'] %}
+        {% for category in categories %}
+            <a href="{{ url_for('index', category=category) }}"
+               class="text-sm font-medium px-3 py-1 rounded-full border border-blue-500 text-blue-700 hover:bg-blue-100 transition">
+               {{ category }}
+            </a>
+        {% endfor %}
+    </div>
+
+<!-- Mobile List View with Pagination -->
+<div class="block md:hidden">
+    <div class="space-y-3">
+        {% for post in posts %}
+        <div class="bg-white shadow">
+            <div class="p-3">
+                <div class="flex items-center space-x-4">
+                    {% if post.photos[0] %}
+                        <a href="{{ url_for('post', post_id=post.id) }}" class="flex-shrink-0">
+                            <img
+                                src="{{ url_for('static', filename='uploads/' + post.photos[0].filename) }}"
+                                alt="Post image"
+                                class="w-16 h-16 object-cover rounded"
+                            >
+                        </a>
+                    {% endif %}
+                    <div class="flex-1 min-w-0">
+                        <a href="{{ url_for('post', post_id=post.id) }}" class="text-blue-600 hover:underline font-medium block">
+                            {{ post.title }}
+                        </a>
+                        <p class="text-lg font-semibold text-gray-800">${{ '%.2f' % post.price }}</p>
+                        <div class="flex items-center justify-between mt-1">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-sm text-gray-500" data-timestamp="{{ post.created_at.strftime('%Y-%m-%dT%H:%M:%SZ') }}">
+                                    {{ post.created_at.strftime('%m/%d/%Y') }}
+                                </span>
+                                <span class="text-sm text-gray-600">{{ post.category }}</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                </svg>
+                                <span class="text-sm text-gray-600">{{ post.comments|length }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Mobile Pagination -->
+    {% if total_pages > 1 %}
+    <div class="mt-4 flex justify-center items-center space-x-4 px-3">
+        {% if current_page > 1 %}
+        <a href="{{ url_for('index', page=(current_page-1), search=request.args.get('search', ''), category=request.args.get('category', 'All')) }}"
+           class="px-4 py-2 text-sm font-medium text-blue-600 bg-white border border-blue-300 rounded-md hover:bg-blue-50 transition shadow">
+            Previous
+        </a>
+        {% endif %}
+
+        <span class="text-sm text-gray-700">
+            Page {{ current_page }} of {{ total_pages }}
+        </span>
+
+        {% if current_page < total_pages %}
+        <a href="{{ url_for('index', page=(current_page+1), search=request.args.get('search', ''), category=request.args.get('category', 'All')) }}"
+           class="px-4 py-2 text-sm font-medium text-blue-600 bg-white border border-blue-300 rounded-md hover:bg-blue-50 transition shadow">
+            Next
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+    <!-- Updated Desktop Table View with Pagination -->
+    <div class="hidden md:block">
+        <div class="bg-white rounded-lg shadow">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comments</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for post in posts %}
+                    <tr class="hover:bg-gradient-to-r hover:from-gray-50 hover:to-white transition-all duration-200">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if post.photos[0] %}
+                                <a href="{{ url_for('post', post_id=post.id) }}" class="block transition-transform duration-200 hover:scale-105">
+                                    <img
+                                        src="{{ url_for('static', filename='uploads/' + post.photos[0].filename) }}"
+                                        alt="Post image"
+                                        class="w-16 h-16 object-cover rounded-md shadow-sm"
+                                    >
+                                </a>
+                            {% else %}
+                                <span class="text-sm text-gray-500 italic">No image</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex flex-col">
+                                <a href="{{ url_for('post', post_id=post.id) }}" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition">
+                                    {{ post.title }}
+                                </a>
+                                <span class="text-xs text-gray-500 mt-1" data-timestamp="{{ post.created_at.strftime('%Y-%m-%dT%H:%M:%SZ') }}">
+                                    {{ post.created_at.strftime('%m/%d/%Y') }}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex px-2.5 py-1 text-sm font-medium text-green-800 bg-green-100 rounded-full">
+                                ${{ '%.2f' % post.price }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% set category_colors = {
+                                'Guns': 'blue',
+                                'Hunting & Fishing': 'amber',
+                                'Misc': 'purple'
+                            } %}
+                            {% set color = category_colors.get(post.category, 'gray') %}
+                            <span class="inline-flex px-2 py-1 text-xs font-medium text-{{ color }}-700 bg-{{ color }}-100 rounded-full">
+                                {{ post.category }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                </svg>
+                                <span class="inline-flex px-2 py-0.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-full">
+                                    {{ post.comments|length }}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+<!-- Pagination -->
+{% if total_pages > 1 %}
+<div class="mt-6 flex justify-center items-center space-x-4">
+    {% if current_page > 1 %}
+    <a href="{{ url_for('index', page=(current_page-1), search=request.args.get('search', ''), category=request.args.get('category', 'All')) }}"
+       class="px-4 py-2 text-sm font-medium text-blue-600 bg-white border border-blue-300 rounded-md hover:bg-blue-50 transition">
+        Previous
+    </a>
+    {% endif %}
+
+    <span class="text-sm text-gray-700">
+        Page {{ current_page }} of {{ total_pages }}
+    </span>
+
+    {% if current_page < total_pages %}
+    <a href="{{ url_for('index', page=(current_page+1), search=request.args.get('search', ''), category=request.args.get('category', 'All')) }}"
+       class="px-4 py-2 text-sm font-medium text-blue-600 bg-white border border-blue-300 rounded-md hover:bg-blue-50 transition">
+        Next
+    </a>
+    {% endif %}
+</div>
+{% endif %}
+    </div>
+</div>
+
+<!-- Relative Time Script -->
+<script>
+// Detect mobile device and browser
+function detectMobileAndBrowser() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+    // Check if mobile
+    const isMobile = /Mobile|Android|iPhone/i.test(userAgent);
+    if (!isMobile) {
+        document.getElementById('addToHomeScreen').style.display = 'none';
+        return;
+    }
+
+    // Detect browser/device type
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+    const isAndroid = /Android/.test(userAgent);
+    const isFacebookBrowser = /FBAN|FBAV/.test(userAgent);
+
+    // Show/hide appropriate instructions
+    document.getElementById('iosInstructions').style.display = isIOS ? 'block' : 'none';
+    document.getElementById('androidInstructions').style.display = isAndroid ? 'block' : 'none';
+
+    // Always show Facebook instructions since it's the primary entry point
+    document.getElementById('facebookInstructions').style.display = 'block';
+}
+
+function showInstallInstructions() {
+    document.getElementById('installModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeInstallModal() {
+    document.getElementById('installModal').classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', detectMobileAndBrowser);
+
+function timeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const secondsPast = Math.floor((now - date) / 1000);
+
+    if (isNaN(date.getTime())) {
+        return 'invalid date';
+    }
+
+    if (secondsPast < 5) {
+        return 'just now';
+    }
+    if (secondsPast < 60) {
+        return `${secondsPast} seconds ago`;
+    }
+    if (secondsPast < 3600) {
+        const minutes = Math.floor(secondsPast / 60);
+        return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+    }
+    if (secondsPast <= 86400) {
+        const hours = Math.floor(secondsPast / 3600);
+        return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+    }
+    if (secondsPast <= 604800) {
+        const days = Math.floor(secondsPast / 86400);
+        return `${days} day${days === 1 ? '' : 's'} ago`;
+    }
+    if (secondsPast <= 2592000) {
+        const weeks = Math.floor(secondsPast / 604800);
+        return `${weeks} week${weeks === 1 ? '' : 's'} ago`;
+    }
+    if (secondsPast <= 31536000) {
+        const months = Math.floor(secondsPast / 2592000);
+        return `${months} month${months === 1 ? '' : 's'} ago`;
+    }
+
+    const years = Math.floor(secondsPast / 31536000);
+    return `${years} year${years === 1 ? '' : 's'} ago`;
+}
+
+function updateTimestamps() {
+    document.querySelectorAll('[data-timestamp]').forEach(element => {
+        const timestamp = element.getAttribute('data-timestamp');
+        const relativeTime = timeAgo(timestamp);
+        if (relativeTime !== element.textContent) {
+            element.textContent = relativeTime;
+        }
+    });
+}
+
+updateTimestamps();
+setInterval(updateTimestamps, 30000);
+</script>
+{% endblock %}
