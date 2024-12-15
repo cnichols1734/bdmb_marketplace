@@ -114,24 +114,25 @@
                 </div>
             </div>
 
-            <!-- Post Password Section -->
+            <!-- Updated Post Password Section -->
             <div class="bg-blue-50 rounded-lg p-4 space-y-4 border border-blue-100">
                 <div class="flex items-center space-x-2">
                     <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                     <label for="post_password" class="block text-sm font-medium text-gray-700">
-                        Post Password <span class="text-gray-400 font-normal">(Optional)</span>
+                        Post Password <span class="text-red-500">*</span>
                     </label>
                 </div>
                 <input
                     type="text"
                     id="post_password"
                     name="post_password"
+                    required
                     class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white"
                     placeholder="Create a password to edit/delete later"
                 >
-                <p class="text-sm text-gray-600">Create a password if you want to edit or delete this post later</p>
+                <p class="text-sm text-gray-600">This password will be required to edit or delete your post later</p>
             </div>
 
             <!-- Photos Section -->
