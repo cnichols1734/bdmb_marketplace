@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
@@ -306,10 +306,14 @@ def index():
                          search=search,
                          category=category)
 
+
 @app.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def post(post_id):
     try:
-        post = Post.query.get_or_404(post_id)
+        post = Post.query.get(post_id)
+        if post is None:
+            return render_template('post_not_found.html'), 404
+
         if request.method == 'POST':
             # Add comment
             comment_content = request.form['content']
