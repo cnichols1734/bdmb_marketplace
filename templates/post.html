@@ -310,29 +310,8 @@ imageContainer.addEventListener('touchend', (e) => {
 // Prevent image dragging
 modalImage.addEventListener('dragstart', (e) => e.preventDefault());
 
-// Share functionality
-async function sharePost() {
-    const title = "{{ post.title }}";
-    const url = window.location.href;
-    const text = `Check out this listing: ${title}`;
-
-    if (navigator.share) {
-        try {
-            await navigator.share({
-                title: title,
-                text: text,
-                url: url
-            });
-        } catch (error) {
-            console.log('Error sharing:', error);
-            fallbackShare();
-        }
-    } else {
-        fallbackShare();
-    }
-}
-
-function fallbackShare() {
+function sharePost() {
+    // Create temporary element
     const el = document.createElement('textarea');
     el.value = window.location.href;
     document.body.appendChild(el);
@@ -340,11 +319,13 @@ function fallbackShare() {
     document.execCommand('copy');
     document.body.removeChild(el);
 
+    // Create and show notification
     const notification = document.createElement('div');
     notification.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg';
-    notification.textContent = 'Link copied to clipboard!';
+    notification.textContent = 'Link copied!';
     document.body.appendChild(notification);
 
+    // Remove notification after 3 seconds
     setTimeout(() => {
         notification.remove();
     }, 3000);
