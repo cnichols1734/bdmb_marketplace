@@ -10,15 +10,6 @@ import threading
 import pytz
 import logging
 from logging.handlers import RotatingFileHandler
-from showcase.showcase_app import (
-    app as showcase_app,
-    ShowcasePost,
-    ShowcasePhoto,
-    ShowcaseComment,
-    SHOWCASE_CATEGORIES
-)
-from werkzeug.middleware.dispatcher import DispatcherMiddleware
-from werkzeug.serving import run_simple
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///new_database_V4.db'
@@ -316,7 +307,6 @@ def index():
                          search=search,
                          category=category)
 
-
 @app.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def post(post_id):
     try:
@@ -474,13 +464,7 @@ def edit_post(post_id):
         return redirect(url_for('post', post_id=post_id))
 
 
-
-
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-
-    application = DispatcherMiddleware(app, {
-        '/showcase': showcase_app
-    })
-    run_simple('0.0.0.0', 5007, application, use_reloader=True)
+    app.run(host="0.0.0.0", port=5005, debug=True)
