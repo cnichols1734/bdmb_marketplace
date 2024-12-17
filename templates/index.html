@@ -46,6 +46,11 @@
         transform: translateY(-2px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     }
+
+        .hover-card a {
+        position: relative;
+        z-index: 1;
+    }
 </style>
 
 <!-- Updated Add to Home Screen Banner -->
@@ -141,23 +146,23 @@
 <div class="block md:hidden px-4">
     <div class="space-y-3">
         {% for post in posts %}
-        <div class="bg-white rounded-lg shadow-sm overflow-hidden hover-card">
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden hover-card cursor-pointer" onclick="window.location.href='{{ url_for('post', post_id=post.id) }}'">
             <div class="p-4">
                 <div class="flex items-center space-x-4">
                     {% if post.photos[0] %}
-                        <a href="{{ url_for('post', post_id=post.id) }}" class="flex-shrink-0">
+                        <div class="flex-shrink-0">
                             <img
                                 src="{{ url_for('static', filename='uploads/' + post.photos[0].filename) }}"
                                 alt="Post image"
                                 loading="lazy"
                                 class="w-20 h-20 object-cover rounded-lg shadow-sm"
                             >
-                        </a>
+                        </div>
                     {% endif %}
                     <div class="flex-1 min-w-0">
-                        <a href="{{ url_for('post', post_id=post.id) }}" class="text-blue-600 hover:text-blue-800 font-medium block">
+                        <div class="text-blue-600 font-medium block">
                             {{ post.title }}
-                        </a>
+                        </div>
                         <p class="text-lg font-bold text-gray-800">${{ '%.2f' % post.price }}</p>
                         <div class="flex items-center justify-between mt-2">
                             <div class="flex items-center space-x-3">
@@ -201,25 +206,24 @@
             </thead>
             <tbody class="divide-y divide-gray-200">
                 {% for post in posts %}
-                <tr class="hover-card">
+                <tr class="hover-card cursor-pointer" onclick="window.location.href='{{ url_for('post', post_id=post.id) }}'">
                     <td class="px-6 py-4 whitespace-nowrap">
                         {% if post.photos[0] %}
-                            <a href="{{ url_for('post', post_id=post.id) }}" class="block hover:opacity-75 transition">
+                            <div class="block hover:opacity-75 transition">
                                 <img
                                     src="{{ url_for('static', filename='uploads/' + post.photos[0].filename) }}"
                                     alt="Post image"
                                     loading="lazy"
                                     class="w-16 h-16 object-cover rounded-lg shadow-sm"
                                 >
-                            </a>
+                            </div>
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex flex-col">
-                            <a href="{{ url_for('post', post_id=post.id) }}"
-                               class="text-blue-600 hover:text-blue-800 font-medium">
+                            <div class="text-blue-600 font-medium">
                                 {{ post.title }}
-                            </a>
+                            </div>
                             <span class="text-sm text-gray-500 mt-1"
                                   data-timestamp="{{ post.created_at.strftime('%Y-%m-%dT%H:%M:%SZ') }}">
                                 {{ post.created_at.strftime('%m/%d/%Y') }}
@@ -239,7 +243,7 @@
                             {{ post.category }}
                         </span>
                     </td>
-            <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center gap-1.5">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
