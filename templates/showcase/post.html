@@ -1,0 +1,207 @@
+{% extends "showcase/base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <!-- Photo Gallery -->
+        <div class="{% if post.photos|length == 1 %}block{% else %}grid grid-cols-2 md:grid-cols-3 gap-1{% endif %}">
+            {% for photo in post.photos %}
+<img src="{{ url_for('static', filename='showcase_uploads/' + photo.filename) }}"
+     alt="{{ photo.caption or post.title }}"
+     class="w-full {% if post.photos|length == 1 %}h-auto max-h-[70vh] object-contain{% else %}h-48 md:h-64 object-cover{% endif %}">
+                {% if photo.caption %}
+                <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 opacity-0 group-hover:opacity-100 transition">
+                    {{ photo.caption }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Content -->
+<div class="p-6 space-y-6">
+    <!-- Header with Edit Button -->
+    <div class="flex justify-between items-start">
+        <div class="space-y-2">
+            <h1 class="text-3xl font-bold text-gray-900">{{ post.title }}</h1>
+            <div class="flex items-center space-x-4">
+                <span class="text-gray-600">By {{ post.craftsman_name }}</span>
+                <span class="text-gray-500" data-timestamp="{{ post.created_at.strftime('%Y-%m-%dT%H:%M:%SZ') }}">
+                    {{ post.created_at.strftime('%B %d, %Y') }}
+                </span>
+            </div>
+        </div>
+        {% if post.post_password %}
+        <div class="flex items-center space-x-2">
+            <a href="/showcase/post/{{ post.id }}/edit"
+               class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <i class="fas fa-edit mr-2"></i>
+                Edit Post
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+            <!-- Category and Tags -->
+            <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                    {{ post.category }}
+                </span>
+                {% if post.tags %}
+                    {% for tag in post.tags.split(',') %}
+                    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                        {{ tag.strip() }}
+                    </span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Description -->
+            <div class="prose max-w-none">
+                <p class="text-gray-700 whitespace-pre-line">{{ post.description }}</p>
+            </div>
+
+            <!-- Contact Information -->
+            {% if post.contact_email or post.contact_phone or post.website %}
+            <div class="bg-blue-50 rounded-lg p-4 space-y-3">
+                <h2 class="text-lg font-semibold text-gray-900">Contact Information</h2>
+                {% if post.contact_email %}
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-envelope text-blue-500"></i>
+                    <a href="mailto:{{ post.contact_email }}" class="text-blue-600 hover:text-blue-800">
+                        {{ post.contact_email }}
+                    </a>
+                </div>
+                {% endif %}
+                {% if post.contact_phone %}
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-phone text-blue-500"></i>
+                    <a href="tel:{{ post.contact_phone }}" class="text-blue-600 hover:text-blue-800">
+                        {{ post.contact_phone }}
+                    </a>
+                </div>
+                {% endif %}
+                {% if post.website %}
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-globe text-blue-500"></i>
+                    <a href="{{ post.website }}" target="_blank" rel="noopener noreferrer"
+                       class="text-blue-600 hover:text-blue-800">
+                        Visit Website
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Comments Section -->
+            <div class="border-t border-gray-200 pt-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Comments</h2>
+
+                {% if post.comments %}
+                <div class="space-y-4 mb-6">
+                    {% for comment in post.comments %}
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <p class="text-gray-700 whitespace-pre-line">{{ comment.content }}</p>
+                        <div class="mt-2 flex items-center justify-between text-sm text-gray-500">
+                            <span>{{ comment.author_name }}</span>
+                            <span data-timestamp="{{ comment.timestamp.strftime('%Y-%m-%dT%H:%M:%SZ') }}">
+                                {{ comment.timestamp.strftime('%B %d, %Y %I:%M %p') }}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-gray-500 italic mb-6">No comments yet</p>
+                {% endif %}
+
+                <!-- Comment Form -->
+                <form action="{{ url_for('add_comment', post_id=post.id) }}" method="post" class="space-y-4">
+                    <div>
+                        <label for="author_name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                        <input type="text" name="author_name" id="author_name"
+                               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="Your name (optional)">
+                    </div>
+                    <div>
+                        <label for="content" class="block text-sm font-medium text-gray-700 mb-1">Comment</label>
+                        <textarea name="content" id="content" rows="3" required
+                                  class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="Share your thoughts..."></textarea>
+                    </div>
+                    <button type="submit"
+                            class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                        Post Comment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-90 hidden items-center justify-center z-50">
+    <button onclick="closeModal()" class="absolute top-4 right-4 text-white hover:text-gray-300 z-50">
+        <i class="fas fa-times fa-2x"></i>
+    </button>
+    <img id="modalImage" src="" alt="Full size image" class="max-h-[90vh] max-w-[90vw] object-contain">
+</div>
+
+<script>
+function openModal(imageSrc, index) {
+    const modal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    modalImage.src = imageSrc;
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    const modal = document.getElementById('imageModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+}
+
+// Close modal when clicking outside the image
+document.getElementById('imageModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModal();
+    }
+});
+
+// Update relative timestamps
+function timeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const secondsPast = (now - date) / 1000;
+
+    if (secondsPast < 60) {
+        return 'just now';
+    }
+    if (secondsPast < 3600) {
+        const minutes = Math.floor(secondsPast / 60);
+        return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+    }
+    if (secondsPast <= 86400) {
+        const hours = Math.floor(secondsPast / 3600);
+        return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+    }
+    // For older posts, return the date
+    return date.toLocaleDateString();
+}
+
+function updateTimestamps() {
+    document.querySelectorAll('[data-timestamp]').forEach(element => {
+        const timestamp = element.getAttribute('data-timestamp');
+        element.textContent = timeAgo(timestamp);
+    });
+}
+
+// Update timestamps every minute
+updateTimestamps();
+setInterval(updateTimestamps, 60000);
+</script>
+{% endblock %}

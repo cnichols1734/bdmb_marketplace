@@ -1,0 +1,139 @@
+{% extends "showcase/base.html" %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto mt-8 mb-12">
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <!-- Header Section -->
+        <div class="px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700">
+            <h1 class="text-xl font-semibold text-white">Share Your Work</h1>
+            <p class="text-blue-100 text-sm mt-1">
+                <span class="text-red-300">*</span> indicates required field
+            </p>
+        </div>
+
+        <form action="{{ url_for('create_showcase') }}" method="post" enctype="multipart/form-data" class="p-6 space-y-6">
+            <!-- Basic Information -->
+            <div class="space-y-4">
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700">
+                        Title <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="title" name="title" required
+                           class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label for="craftsman_name" class="block text-sm font-medium text-gray-700">
+                        Craftsman Name <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="craftsman_name" name="craftsman_name" required
+                           class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700">
+                        Description <span class="text-red-500">*</span>
+                    </label>
+                    <textarea id="description" name="description" rows="6" required
+                              class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="Tell us about your work..."></textarea>
+                </div>
+            </div>
+
+            <!-- Category and Tags -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="category" class="block text-sm font-medium text-gray-700">
+                        Category <span class="text-red-500">*</span>
+                    </label>
+                    <select id="category" name="category" required
+                            class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Select a category</option>
+                        {% for category in categories %}
+                        <option value="{{ category }}">{{ category }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label for="tags" class="block text-sm font-medium text-gray-700">
+                        Tags
+                    </label>
+                    <input type="text" id="tags" name="tags"
+                           class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="Separate tags with commas">
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="contact_email" class="block text-sm font-medium text-gray-700">
+                        Contact Email
+                    </label>
+                    <input type="email" id="contact_email" name="contact_email"
+                           class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label for="contact_phone" class="block text-sm font-medium text-gray-700">
+                        Contact Phone
+                    </label>
+                    <input type="tel" id="contact_phone" name="contact_phone"
+                           class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+
+            <!-- Website -->
+            <div>
+                <label for="website" class="block text-sm font-medium text-gray-700">
+                    Website
+                </label>
+                <input type="url" id="website" name="website"
+                       class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
+                       placeholder="https://">
+            </div>
+
+            <!-- Photos -->
+            <div class="space-y-4">
+                <label class="block text-sm font-medium text-gray-700">
+                    Photos <span class="text-red-500">*</span>
+                </label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% for i in range(1, 11) %}
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">Photo {{ i }}</span>
+                            <span class="text-sm text-gray-400">{{ 'Required' if i == 1 else 'Optional' }}</span>
+                        </div>
+                        <input type="file" name="photo{{ i }}" accept="image/*"
+                               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                               {{ 'required' if i == 1 else '' }}>
+                        <input type="text" name="caption{{ i }}" placeholder="Caption (optional)"
+                               class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-2 text-sm">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Post Password -->
+            <div class="bg-blue-50 rounded-lg p-4">
+                <label for="post_password" class="block text-sm font-medium text-gray-700">
+                    Post Password <span class="text-gray-500">(optional)</span>
+                </label>
+                <input type="password" id="post_password" name="post_password"
+                       class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500">
+                <p class="mt-1 text-sm text-gray-500">Set a password if you want to edit or delete this post later</p>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end pt-6">
+                <button type="submit"
+                        class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                    Share Your Work
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

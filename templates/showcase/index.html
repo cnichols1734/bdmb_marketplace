@@ -1,0 +1,118 @@
+{% extends "showcase/base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Page Header -->
+<!-- Page Header -->
+<div class="text-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Craftsman Showcase</h1>
+    <div class="mt-4 max-w-3xl mx-auto">
+        <p class="text-lg text-gray-600 mb-2">
+            A dedicated space for Mont Belvieu's service providers, craftsmen, and skilled professionals to showcase their work and connect with the community.
+        </p>
+    </div>
+    <div class="mt-6 flex justify-center space-x-4">
+        <div class="inline-flex items-center text-gray-600">
+            <svg class="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span>Share Your Services</span>
+        </div>
+        <div class="inline-flex items-center text-gray-600">
+            <svg class="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+            </svg>
+            <span>Connect Locally</span>
+        </div>
+        <div class="inline-flex items-center text-gray-600">
+            <svg class="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span>Build Community</span>
+        </div>
+    </div>
+</div>
+
+    <!-- Category Navigation -->
+    <div class="flex flex-wrap justify-center gap-2 mb-8">
+        <a href="{{ url_for('showcase_index') }}" 
+           class="px-4 py-2 rounded-full {% if not selected_category %}bg-blue-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} transition">
+            All
+        </a>
+        {% for category in categories %}
+        <a href="{{ url_for('showcase_index', category=category) }}"
+           class="px-4 py-2 rounded-full {% if category == selected_category %}bg-blue-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} transition">
+            {{ category }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Create Post Button -->
+    <div class="flex justify-center mb-8">
+        <a href="{{ url_for('create_showcase') }}"
+           class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+            Share Your Work
+        </a>
+    </div>
+
+    <!-- Posts Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for post in posts.items %}
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition">
+            {% if post.photos %}
+            <img src="{{ url_for('static', filename='showcase_uploads/' + post.photos[0].filename) }}"
+                 alt="{{ post.title }}"
+                 class="w-full h-48 object-cover">
+            {% endif %}
+            <div class="p-4">
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">{{ post.title }}</h2>
+                <p class="text-gray-600 mb-3">By {{ post.craftsman_name }}</p>
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                        {{ post.category }}
+                    </span>
+                    <span class="text-sm text-gray-500">
+                        {{ post.created_at.strftime('%B %d, %Y') }}
+                    </span>
+                </div>
+                <a href="{{ url_for('showcase_post', post_id=post.id) }}"
+                   class="mt-4 inline-flex items-center text-blue-600 hover:text-blue-800">
+                    View Details
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if posts.pages > 1 %}
+    <div class="flex justify-center mt-8">
+        <nav class="inline-flex rounded-md shadow">
+            {% if posts.has_prev %}
+            <a href="{{ url_for('showcase_index', page=posts.prev_num, category=selected_category) }}"
+               class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                Previous
+            </a>
+            {% endif %}
+            
+            <span class="px-3 py-2 border-t border-b border-gray-300 bg-white text-sm font-medium text-gray-700">
+                Page {{ posts.page }} of {{ posts.pages }}
+            </span>
+
+            {% if posts.has_next %}
+            <a href="{{ url_for('showcase_index', page=posts.next_num, category=selected_category) }}"
+               class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                Next
+            </a>
+            {% endif %}
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
