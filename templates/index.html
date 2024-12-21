@@ -262,32 +262,32 @@
 
 <!-- Enhanced Pagination -->
 {% if total_pages > 1 %}
-<div class="mt-8 flex justify-center items-center space-x-4">
-    <div class="bg-white rounded-lg shadow-sm px-2 py-1 flex items-center space-x-2">
+<div class="mt-8 flex justify-center items-center">
+    <nav class="flex items-center bg-white rounded-lg shadow-sm" aria-label="Pagination">
         {% if current_page > 1 %}
         <a href="{{ url_for('index', page=(current_page-1), search=request.args.get('search', ''), category=request.args.get('category', 'All')) }}"
-           class="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-md transition-colors duration-200 flex items-center">
-            <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-l-lg transition-colors duration-200">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>
             Previous
         </a>
         {% endif %}
 
-        <div class="px-4 py-2 text-sm font-medium text-gray-700 border-l border-r border-gray-200">
-            Page {{ current_page }} of {{ total_pages }}
+        <div class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50">
+            <span>Page {{ current_page }} of {{ total_pages }}</span>
         </div>
 
         {% if current_page < total_pages %}
         <a href="{{ url_for('index', page=(current_page+1), search=request.args.get('search', ''), category=request.args.get('category', 'All')) }}"
-           class="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-md transition-colors duration-200 flex items-center">
+           class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-r-lg transition-colors duration-200">
             Next
-            <svg class="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
         </a>
         {% endif %}
-    </div>
+    </nav>
 </div>
 {% endif %}
 
